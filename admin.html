@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="博客后台管理">
+    <meta name="referrer" content="strict-origin">
+
+    <meta property="og:title" content="后台管理 — 我的博客">
+    <meta property="og:description" content="博客后台管理">
+    <meta property="og:type" content="website">
+
+    <title>后台管理 — 我的博客</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        .admin-page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+            width: 100%;
+        }
+
+        @media (min-width: 740px) {
+            .admin-page {
+                padding: 48px 24px 80px;
+            }
+        }
+
+        .admin-title {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: 1.15;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+        }
+
+        @media (min-width: 740px) {
+            .admin-title {
+                font-size: 40px;
+            }
+        }
+
+        .admin-subtitle {
+            font-size: 17px;
+            color: var(--color-text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .admin-section {
+            background-color: var(--color-card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .admin-section-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            color: var(--color-text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-section-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-accent);
+        }
+
+        .admin-field {
+            margin-bottom: 16px;
+        }
+
+        .admin-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .admin-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .admin-input,
+        .admin-textarea,
+        .admin-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background-color: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            font-family: var(--font-sans);
+            font-size: 15px;
+            outline: none;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .admin-input:focus,
+        .admin-textarea:focus,
+        .admin-select:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+        }
+
+        .admin-input::placeholder,
+        .admin-textarea::placeholder {
+            color: var(--color-text-tertiary);
+        }
+
+        .admin-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .admin-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236e6e73' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+
+        .admin-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 740px) {
+            .admin-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .admin-checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .admin-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--color-accent);
+            cursor: pointer;
+        }
+
+        .admin-checkbox-label {
+            font-size: 15px;
+            color: var(--color-text-primary);
+            cursor: pointer;
+        }
+
+        .admin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 100px;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+            text-decoration: none;
+        }
+
+        .admin-btn:active {
+            transform: scale(0.97);
+        }
+
+        .admin-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .admin-btn-primary {
+            background-color: var(--color-accent);
+            color: #ffffff;
+        }
+
+        .admin-btn-primary:hover {
+            background-color: var(--color-accent-hover);
+            color: #ffffff;
+        }
+
+        .admin-btn-secondary {
+            background-color: var(--color-tag-bg);
+            color: var(--color-text-primary);
+        }
+
+        .admin-btn-secondary:hover {
+            background-color: var(--color-border);
+            color: var(--color-text-primary);
+        }
+
+        .admin-btn-danger {
+            background-color: #ff3b30;
+            color: #ffffff;
+        }
+
+        .admin-btn-danger:hover {
+            background-color: #ff5147;
+            color: #ffffff;
+        }
+
+        .admin-btn-sm {
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+
+        .admin-btn-icon {
+            padding: 6px;
+            border-radius: var(--radius-sm);
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: color var(--transition-fast), background-color var(--transition-fast);
+        }
+
+        .admin-btn-icon:hover {
+            color: var(--color-text-primary);
+            background-color: var(--color-sidebar-hover);
+        }
+
+        .admin-btn-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .admin-categories-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .admin-category-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 100px;
+            background-color: var(--color-tag-bg);
+            color: var(--color-tag-text);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .admin-category-remove {
+            background: none;
+            border: none;
+            color: var(--color-text-tertiary);
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            transition: color var(--transition-fast);
+        }
+
+        .admin-category-remove:hover {
+            color: #ff3b30;
+        }
+
+        .admin-category-remove svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .admin-add-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-add-row .admin-input {
+            flex: 1;
+        }
+
+        .admin-articles-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-articles-table th {
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .admin-articles-table td {
+            padding: 12px;
+            font-size: 14px;
+            color: var(--color-text-primary);
+            border-bottom: 0.5px solid var(--color-border);
+            vertical-align: middle;
+        }
+
+        .admin-articles-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-article-title-cell {
+            font-weight: 500;
+            max-width: 280px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .admin-article-category-cell {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .admin-article-actions-cell {
+            display: flex;
+            gap: 4px;
+            justify-content: flex-end;
+        }
+
+        .admin-featured-badge {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ff9500;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .admin-editor-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: var(--color-overlay);
+            z-index: 300;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+
+        .admin-editor-overlay.active {
+            display: flex;
+        }
+
+        .admin-editor-panel {
+            width: 100%;
+            max-width: 1200px;
+            background-color: var(--color-card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card-hover);
+            overflow: hidden;
+        }
+
+        .admin-editor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 0.5px solid var(--color-border);
+        }
+
+        .admin-editor-header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .admin-editor-header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-editor-body {
+            padding: 24px;
+        }
+
+        .admin-editor-meta {
+            margin-bottom: 24px;
+        }
+
+        .admin-markdown-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            min-height: 400px;
+        }
+
+        @media (min-width: 740px) {
+            .admin-markdown-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .admin-markdown-editor,
+        .admin-markdown-preview {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-markdown-editor-label,
+        .admin-markdown-preview-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 8px;
+        }
+
+        .admin-markdown-textarea {
+            flex: 1;
+            min-height: 380px;
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background-color: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .admin-markdown-textarea:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+        }
+
+        .admin-markdown-preview-content {
+            flex: 1;
+            min-height: 380px;
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background-color: var(--color-bg-secondary);
+            overflow-y: auto;
+        }
+
+        .admin-markdown-preview-content .article-content {
+            font-size: 15px;
+            line-height: 1.65;
+        }
+
+        .admin-confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: var(--color-overlay);
+            z-index: 400;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .admin-confirm-overlay.active {
+            display: flex;
+        }
+
+        .admin-confirm-dialog {
+            width: 100%;
+            max-width: 360px;
+            background-color: var(--color-card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card-hover);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .admin-confirm-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .admin-confirm-message {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .admin-confirm-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .admin-toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background-color: var(--color-text-primary);
+            color: var(--color-bg);
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 500;
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .admin-toast.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .admin-articles-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .admin-empty-state {
+            text-align: center;
+            padding: 32px;
+            color: var(--color-text-tertiary);
+            font-size: 15px;
+        }
+
+        .admin-section-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="navigation-container">
+            <div class="navigation-wrapper">
+                <div class="nav-header">
+                    <a href="index.html" class="nav-logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        我的博客
+                    </a>
+                    <div class="nav-actions">
+                        <button class="nav-search-btn" aria-label="Search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </button>
+                        <button class="nav-theme-btn" aria-label="Toggle theme">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        </button>
+                        <button class="nav-menu-btn" aria-label="Menu">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" class="search-input" placeholder="搜索文章..." aria-label="搜索文章">
+                    </div>
+                </div>
+
+                <nav class="nav-links" aria-label="Main navigation">
+                    <div class="nav-section-title">发现</div>
+                    <a href="index.html" class="nav-link" data-nav="home">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        首页
+                    </a>
+                    <a href="index.html?featured=true" class="nav-link" data-nav="featured">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        精选
+                    </a>
+                    <a href="about.html" class="nav-link" data-nav="about">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        关于
+                    </a>
+
+                    <div class="nav-section-title">分类</div>
+                    <a href="index.html?tag=开发" class="nav-link" data-nav="cat-开发">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        开发
+                    </a>
+                    <a href="index.html?tag=设计" class="nav-link" data-nav="cat-设计">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                        设计
+                    </a>
+                    <a href="index.html?tag=创意" class="nav-link" data-nav="cat-创意">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                        创意
+                    </a>
+                    <a href="index.html?tag=生活" class="nav-link" data-nav="cat-生活">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                        生活
+                    </a>
+
+                    <div class="nav-section-title">管理</div>
+                    <a href="admin.html" class="nav-link" data-nav="admin">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        后台管理
+                    </a>
+                    <a href="vault.html" class="nav-link" data-nav="vault">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        私密相册
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="page-container" data-page="admin">
+            <div class="admin-page">
+                <h1 class="admin-title">后台管理</h1>
+                <p class="admin-subtitle">管理博客设置、分类和文章。</p>
+
+                <div class="admin-section" id="site-settings-section">
+                    <div class="admin-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        站点设置
+                    </div>
+                    <div class="admin-field">
+                        <label class="admin-label" for="setting-site-name">站点名称</label>
+                        <input type="text" id="setting-site-name" class="admin-input" placeholder="我的博客">
+                    </div>
+                    <div class="admin-field">
+                        <label class="admin-label" for="setting-site-desc">站点描述</label>
+                        <input type="text" id="setting-site-desc" class="admin-input" placeholder="一个个人博客...">
+                    </div>
+                    <div class="admin-field">
+                        <label class="admin-label" for="setting-hero-article">首页大图文章</label>
+                        <select id="setting-hero-article" class="admin-input" style="appearance:auto;padding:8px 12px"></select>
+                    </div>
+                    <div class="admin-field">
+                        <label class="admin-label">大图标题颜色</label>
+                        <div style="display:flex;gap:12px;align-items:center">
+                            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;color:var(--color-text-secondary)">
+                                <input type="radio" name="heroTitleColor" value="white" id="hero-color-white" style="accent-color:var(--color-accent)"> 白色
+                            </label>
+                            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;color:var(--color-text-secondary)">
+                                <input type="radio" name="heroTitleColor" value="black" id="hero-color-black" style="accent-color:var(--color-accent)"> 黑色
+                            </label>
+                        </div>
+                    </div>
+                    <div class="admin-section-actions">
+                        <button class="admin-btn admin-btn-primary" id="btn-save-settings">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            保存设置
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-section" id="categories-section">
+                    <div class="admin-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        分类管理
+                    </div>
+                    <div class="admin-categories-list" id="categories-list"></div>
+                    <div class="admin-add-row">
+                        <input type="text" id="new-category-input" class="admin-input" placeholder="新分类名称...">
+                        <button class="admin-btn admin-btn-secondary" id="btn-add-category">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            添加
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-section" id="articles-section">
+                    <div class="admin-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        文章管理
+                    </div>
+                    <div class="admin-articles-scroll">
+                        <table class="admin-articles-table">
+                            <thead>
+                                <tr>
+                                    <th>标题</th>
+                                    <th>分类</th>
+                                    <th>日期</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="articles-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="admin-section-actions">
+                        <button class="admin-btn admin-btn-primary" id="btn-new-article">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            新建文章
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer-container">
+                <div class="footer-inner">
+                    <div class="footer-links">
+                        <a href="index.html">首页</a>
+                        <a href="about.html">关于</a>
+                        <a href="admin.html">后台管理</a>
+                    </div>
+                    <span>&copy; 2026 我的博客. 保留所有权利.</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div class="search-overlay">
+        <div class="search-modal">
+            <div class="search-modal-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="search-modal-input" placeholder="搜索文章..." aria-label="搜索">
+                <button class="search-modal-close" aria-label="关闭搜索">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="search-results"></div>
+        </div>
+    </div>
+
+    <div class="admin-editor-overlay" id="editor-overlay">
+        <div class="admin-editor-panel">
+            <div class="admin-editor-header">
+                <div class="admin-editor-header-title" id="editor-title">新建文章</div>
+                <div class="admin-editor-header-actions">
+                    <button class="admin-btn admin-btn-secondary admin-btn-sm" id="btn-upload-md">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        上传 Markdown 文件
+                    </button>
+                    <button class="admin-btn admin-btn-primary admin-btn-sm" id="btn-save-article">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        保存
+                    </button>
+                    <button class="admin-btn-icon" id="btn-close-editor" aria-label="关闭编辑器">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="admin-editor-body">
+                <div class="admin-editor-meta">
+                    <div class="admin-row">
+                        <div class="admin-field">
+                            <label class="admin-label" for="editor-article-title">标题</label>
+                            <input type="text" id="editor-article-title" class="admin-input" placeholder="文章标题...">
+                        </div>
+                        <div class="admin-field">
+                            <label class="admin-label" for="editor-article-category">分类</label>
+                            <select id="editor-article-category" class="admin-select"></select>
+                        </div>
+                    </div>
+                    <div class="admin-field">
+                        <label class="admin-label" for="editor-article-excerpt">摘要</label>
+                        <input type="text" id="editor-article-excerpt" class="admin-input" placeholder="简要描述...">
+                    </div>
+                    <div class="admin-row">
+                        <div class="admin-field">
+                            <label class="admin-label" for="editor-article-tags">标签（逗号分隔）</label>
+                            <input type="text" id="editor-article-tags" class="admin-input" placeholder="JavaScript, Web, CSS">
+                        </div>
+                        <div class="admin-field">
+                            <label class="admin-label" for="editor-article-date">日期</label>
+                            <input type="date" id="editor-article-date" class="admin-input">
+                        </div>
+                    </div>
+                    <div class="admin-row">
+                        <div class="admin-field">
+                            <label class="admin-label" for="editor-article-readtime">阅读时间</label>
+                            <input type="text" id="editor-article-readtime" class="admin-input" placeholder="5 分钟阅读">
+                        </div>
+                        <div class="admin-field">
+                            <label class="admin-label" for="editor-article-image">图片链接</label>
+                            <input type="text" id="editor-article-image" class="admin-input" placeholder="https://...">
+                        </div>
+                    </div>
+                    <div class="admin-row">
+                        <div class="admin-field">
+                            <label class="admin-label" for="editor-article-heroimage">封面图片链接</label>
+                            <input type="text" id="editor-article-heroimage" class="admin-input" placeholder="https://...">
+                        </div>
+                        <div class="admin-field">
+                            <div class="admin-checkbox-row" style="margin-top:24px;">
+                                <input type="checkbox" id="editor-article-featured" class="admin-checkbox">
+                                <label for="editor-article-featured" class="admin-checkbox-label">精选</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-markdown-row">
+                    <div class="admin-markdown-editor">
+                        <div class="admin-markdown-editor-label">内容（Markdown）</div>
+                        <textarea id="editor-article-content" class="admin-markdown-textarea" placeholder="用 Markdown 撰写文章..."></textarea>
+                    </div>
+                    <div class="admin-markdown-preview">
+                        <div class="admin-markdown-preview-label">预览</div>
+                        <div id="editor-preview" class="admin-markdown-preview-content">
+                            <div class="article-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-confirm-overlay" id="confirm-overlay">
+        <div class="admin-confirm-dialog">
+            <div class="admin-confirm-title" id="confirm-title">删除文章？</div>
+            <div class="admin-confirm-message" id="confirm-message">此操作无法撤销。</div>
+            <div class="admin-confirm-actions">
+                <button class="admin-btn admin-btn-secondary admin-btn-sm" id="btn-confirm-cancel">取消</button>
+                <button class="admin-btn admin-btn-danger admin-btn-sm" id="btn-confirm-ok">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-toast" id="admin-toast"></div>
+
+    <input type="file" id="md-file-input" accept=".md" style="display:none;">
+
+    <script src="assets/data.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+    (function() {
+        var editingArticleId = null;
+        var confirmCallback = null;
+
+        function $(sel) { return document.querySelector(sel); }
+        function $$(sel) { return document.querySelectorAll(sel); }
+
+        function showToast(message) {
+            var toast = $('#admin-toast');
+            toast.textContent = message;
+            toast.classList.add('visible');
+            setTimeout(function() {
+                toast.classList.remove('visible');
+            }, 2500);
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            $('#confirm-title').textContent = title;
+            $('#confirm-message').textContent = message;
+            confirmCallback = onConfirm;
+            $('#confirm-overlay').classList.add('active');
+        }
+
+        function hideConfirm() {
+            $('#confirm-overlay').classList.remove('active');
+            confirmCallback = null;
+        }
+
+        function populateSettings() {
+            $('#setting-site-name').value = BLOG_DATA.siteName || '';
+            $('#setting-site-desc').value = BLOG_DATA.siteDescription || '';
+            var select = $('#setting-hero-article');
+            select.innerHTML = '<option value="">-- 不显示大图 --</option>';
+            BLOG_DATA.articles.forEach(function(a) {
+                var opt = document.createElement('option');
+                opt.value = a.id;
+                opt.textContent = a.title;
+                if (a.id === BLOG_DATA.heroArticleId) opt.selected = true;
+                select.appendChild(opt);
+            });
+            var color = BLOG_DATA.heroTitleColor || 'white';
+            if (color === 'black') { $('#hero-color-black').checked = true; }
+            else { $('#hero-color-white').checked = true; }
+        }
+
+        function saveSettings() {
+            BLOG_DATA.siteName = $('#setting-site-name').value.trim();
+            BLOG_DATA.siteDescription = $('#setting-site-desc').value.trim();
+            BLOG_DATA.heroArticleId = $('#setting-hero-article').value;
+            var colorRadio = document.querySelector('input[name="heroTitleColor"]:checked');
+            BLOG_DATA.heroTitleColor = colorRadio ? colorRadio.value : 'white';
+            window.BlogAdmin.saveOverrides();
+            showToast('设置已保存');
+        }
+
+        function renderCategories() {
+            var list = $('#categories-list');
+            list.innerHTML = BLOG_DATA.categories.map(function(cat) {
+                return '<span class="admin-category-tag">' +
+                    cat +
+                    '<button class="admin-category-remove" data-category="' + cat + '" aria-label="移除 ' + cat + '">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+                    '</button></span>';
+            }).join('');
+        }
+
+        function addCategory() {
+            var input = $('#new-category-input');
+            var name = input.value.trim();
+            if (!name) return;
+            if (BLOG_DATA.categories.indexOf(name) !== -1) {
+                showToast('分类已存在');
+                return;
+            }
+            BLOG_DATA.categories.push(name);
+            window.BlogAdmin.saveOverrides();
+            renderCategories();
+            input.value = '';
+            showToast('分类已添加');
+        }
+
+        function removeCategory(name) {
+            BLOG_DATA.categories = BLOG_DATA.categories.filter(function(c) { return c !== name; });
+            window.BlogAdmin.saveOverrides();
+            renderCategories();
+            showToast('分类已删除');
+        }
+
+        function renderArticles() {
+            var tbody = $('#articles-tbody');
+            if (BLOG_DATA.articles.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="admin-empty-state">暂无文章。创建你的第一篇文章！</td></tr>';
+                return;
+            }
+            tbody.innerHTML = BLOG_DATA.articles.map(function(a) {
+                return '<tr>' +
+                    '<td class="admin-article-title-cell">' +
+                    (a.featured ? '<span class="admin-featured-badge"></span>' : '') +
+                    a.title +
+                    '</td>' +
+                    '<td class="admin-article-category-cell">' + a.category + '</td>' +
+                    '<td>' + a.date + '</td>' +
+                    '<td class="admin-article-actions-cell">' +
+                    '<button class="admin-btn-icon btn-edit-article" data-id="' + a.id + '" aria-label="编辑">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+                    '</button>' +
+                    '<button class="admin-btn-icon btn-delete-article" data-id="' + a.id + '" aria-label="删除">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+                    '</button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        function populateCategoryDropdown() {
+            var select = $('#editor-article-category');
+            select.innerHTML = BLOG_DATA.categories.map(function(cat) {
+                return '<option value="' + cat + '">' + cat + '</option>';
+            }).join('');
+        }
+
+        function openEditor(articleId) {
+            editingArticleId = articleId || null;
+            populateCategoryDropdown();
+
+            if (articleId) {
+                var article = window.BlogAdmin.getArticleById(articleId);
+                if (!article) return;
+                $('#editor-title').textContent = '编辑文章';
+                $('#editor-article-title').value = article.title || '';
+                $('#editor-article-excerpt').value = article.excerpt || '';
+                $('#editor-article-category').value = article.category || '';
+                $('#editor-article-tags').value = (article.tags || []).join(', ');
+                $('#editor-article-date').value = article.date || '';
+                $('#editor-article-readtime').value = article.readTime || '';
+                $('#editor-article-image').value = article.image || '';
+                $('#editor-article-heroimage').value = article.heroImage || '';
+                $('#editor-article-featured').checked = !!article.featured;
+                $('#editor-article-content').value = article.contentMd || '';
+                updatePreview();
+            } else {
+                $('#editor-title').textContent = '新建文章';
+                $('#editor-article-title').value = '';
+                $('#editor-article-excerpt').value = '';
+                $('#editor-article-category').selectedIndex = 0;
+                $('#editor-article-tags').value = '';
+                $('#editor-article-date').value = new Date().toISOString().split('T')[0];
+                $('#editor-article-readtime').value = '';
+                $('#editor-article-image').value = '';
+                $('#editor-article-heroimage').value = '';
+                $('#editor-article-featured').checked = false;
+                $('#editor-article-content').value = '';
+                updatePreview();
+            }
+
+            $('#editor-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditor() {
+            $('#editor-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+            editingArticleId = null;
+        }
+
+        function updatePreview() {
+            var md = $('#editor-article-content').value;
+            var html = window.BlogAdmin.renderMarkdown(md);
+            var previewEl = $('#editor-preview .article-content');
+            if (previewEl) previewEl.innerHTML = html;
+        }
+
+        function generateId(title) {
+            var base = title.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .substring(0, 60);
+            if (!base) base = 'article';
+            var existing = BLOG_DATA.articles.map(function(a) { return a.id; });
+            var id = base;
+            var counter = 1;
+            while (existing.indexOf(id) !== -1) {
+                id = base + '-' + counter;
+                counter++;
+            }
+            return id;
+        }
+
+        function saveArticle() {
+            var title = $('#editor-article-title').value.trim();
+            if (!title) {
+                showToast('标题不能为空');
+                return;
+            }
+
+            var category = $('#editor-article-category').value;
+            var tagsRaw = $('#editor-article-tags').value;
+            var tags = tagsRaw.split(',').map(function(t) { return t.trim(); }).filter(function(t) { return t; });
+            var articleData = {
+                id: editingArticleId || generateId(title),
+                title: title,
+                excerpt: $('#editor-article-excerpt').value.trim(),
+                category: category,
+                tags: tags,
+                date: $('#editor-article-date').value,
+                readTime: $('#editor-article-readtime').value.trim(),
+                image: $('#editor-article-image').value.trim(),
+                heroImage: $('#editor-article-heroimage').value.trim(),
+                featured: $('#editor-article-featured').checked,
+                contentMd: $('#editor-article-content').value
+            };
+
+            if (editingArticleId) {
+                var idx = BLOG_DATA.articles.findIndex(function(a) { return a.id === editingArticleId; });
+                if (idx !== -1) {
+                    BLOG_DATA.articles[idx] = articleData;
+                }
+            } else {
+                BLOG_DATA.articles.unshift(articleData);
+            }
+
+            window.BlogAdmin.saveOverrides();
+            renderArticles();
+            closeEditor();
+            showToast(editingArticleId ? '文章已保存' : '文章已保存');
+        }
+
+        function deleteArticle(id) {
+            var article = window.BlogAdmin.getArticleById(id);
+            if (!article) return;
+            showConfirm(
+                '删除文章？',
+                '确定要删除"' + article.title + '"吗？此操作无法撤销。',
+                function() {
+                    BLOG_DATA.articles = BLOG_DATA.articles.filter(function(a) { return a.id !== id; });
+                    window.BlogAdmin.saveOverrides();
+                    renderArticles();
+                    showToast('文章已删除');
+                }
+            );
+        }
+
+        function initFileUpload() {
+            var fileInput = $('#md-file-input');
+            $('#btn-upload-md').addEventListener('click', function() {
+                fileInput.click();
+            });
+            fileInput.addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    var content = ev.target.result;
+                    $('#editor-article-content').value = content;
+                    updatePreview();
+                    if (!editingArticleId) {
+                        var name = file.name.replace(/\.md$/i, '');
+                        if (!$('#editor-article-title').value.trim()) {
+                            $('#editor-article-title').value = name.replace(/[-_]/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+                        }
+                    }
+                    showToast('Markdown 文件已加载');
+                };
+                reader.readAsText(file);
+                fileInput.value = '';
+            });
+        }
+
+        function init() {
+            populateSettings();
+            renderCategories();
+            renderArticles();
+
+            $('#btn-save-settings').addEventListener('click', saveSettings);
+
+            $('#btn-add-category').addEventListener('click', addCategory);
+            $('#new-category-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') addCategory();
+            });
+
+            $('#categories-list').addEventListener('click', function(e) {
+                var btn = e.target.closest('.admin-category-remove');
+                if (btn) removeCategory(btn.dataset.category);
+            });
+
+            $('#btn-new-article').addEventListener('click', function() {
+                openEditor(null);
+            });
+
+            $('#articles-tbody').addEventListener('click', function(e) {
+                var editBtn = e.target.closest('.btn-edit-article');
+                if (editBtn) {
+                    openEditor(editBtn.dataset.id);
+                    return;
+                }
+                var deleteBtn = e.target.closest('.btn-delete-article');
+                if (deleteBtn) {
+                    deleteArticle(deleteBtn.dataset.id);
+                }
+            });
+
+            $('#btn-close-editor').addEventListener('click', closeEditor);
+            $('#btn-save-article').addEventListener('click', saveArticle);
+
+            $('#editor-overlay').addEventListener('click', function(e) {
+                if (e.target === this) closeEditor();
+            });
+
+            $('#editor-article-content').addEventListener('input', updatePreview);
+
+            $('#btn-confirm-cancel').addEventListener('click', hideConfirm);
+            $('#btn-confirm-ok').addEventListener('click', function() {
+                if (confirmCallback) confirmCallback();
+                hideConfirm();
+            });
+
+            $('#confirm-overlay').addEventListener('click', function(e) {
+                if (e.target === this) hideConfirm();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if ($('#confirm-overlay').classList.contains('active')) {
+                        hideConfirm();
+                    } else if ($('#editor-overlay').classList.contains('active')) {
+                        closeEditor();
+                    }
+                }
+            });
+
+            initFileUpload();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+</body>
+</html>

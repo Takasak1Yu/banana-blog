@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="StaticVault — 私密相册">
+    <meta name="referrer" content="strict-origin">
+
+    <meta property="og:title" content="私密相册 — 我的博客">
+    <meta property="og:description" content="StaticVault 私密相册">
+    <meta property="og:type" content="website">
+
+    <title>私密相册 — 我的博客</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        .vault-page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+            width: 100%;
+        }
+
+        @media (min-width: 740px) {
+            .vault-page {
+                padding: 48px 24px 80px;
+            }
+        }
+
+        .vault-title {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: 1.15;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+        }
+
+        @media (min-width: 740px) {
+            .vault-title {
+                font-size: 40px;
+            }
+        }
+
+        .vault-subtitle {
+            font-size: 17px;
+            color: var(--color-text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .vault-lock-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .vault-lock-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 113, 227, 0.25);
+        }
+
+        .vault-lock-icon svg {
+            width: 36px;
+            height: 36px;
+            color: #ffffff;
+        }
+
+        .vault-lock-title {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .vault-lock-desc {
+            font-size: 15px;
+            color: var(--color-text-secondary);
+            margin-bottom: 28px;
+            max-width: 320px;
+            line-height: 1.5;
+        }
+
+        .vault-password-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .vault-password-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background-color: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            font-family: var(--font-sans);
+            font-size: 17px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 0.1em;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .vault-password-input:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+        }
+
+        .vault-password-input::placeholder {
+            letter-spacing: normal;
+            color: var(--color-text-tertiary);
+        }
+
+        .vault-password-input.error {
+            border-color: #ff3b30;
+            box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.15);
+            animation: vaultShake 0.4s ease;
+        }
+
+        @keyframes vaultShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+
+        .vault-error-msg {
+            font-size: 13px;
+            color: #ff3b30;
+            min-height: 18px;
+        }
+
+        .vault-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 100px;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+            text-decoration: none;
+        }
+
+        .vault-btn:active {
+            transform: scale(0.97);
+        }
+
+        .vault-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .vault-btn-primary {
+            background-color: var(--color-accent);
+            color: #ffffff;
+        }
+
+        .vault-btn-primary:hover {
+            background-color: var(--color-accent-hover);
+            color: #ffffff;
+        }
+
+        .vault-btn-secondary {
+            background-color: var(--color-tag-bg);
+            color: var(--color-text-primary);
+        }
+
+        .vault-btn-secondary:hover {
+            background-color: var(--color-border);
+            color: var(--color-text-primary);
+        }
+
+        .vault-btn-danger {
+            background-color: #ff3b30;
+            color: #ffffff;
+        }
+
+        .vault-btn-danger:hover {
+            background-color: #ff5147;
+            color: #ffffff;
+        }
+
+        .vault-btn-sm {
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+
+        .vault-gallery {
+            display: none;
+        }
+
+        .vault-gallery.active {
+            display: block;
+        }
+
+        .vault-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 0.5px solid var(--color-border);
+        }
+
+        .vault-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vault-toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vault-photo-count {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+
+        .vault-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        @media (min-width: 740px) {
+            .vault-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 16px;
+            }
+        }
+
+        .vault-photo-card {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background-color: var(--color-bg-secondary);
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .vault-photo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .vault-photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .vault-photo-delete {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity var(--transition-fast), background-color var(--transition-fast);
+        }
+
+        .vault-photo-card:hover .vault-photo-delete {
+            opacity: 1;
+        }
+
+        .vault-photo-delete:hover {
+            background-color: #ff3b30;
+        }
+
+        .vault-photo-delete svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .vault-photo-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 10px 8px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .vault-photo-card:hover .vault-photo-name {
+            opacity: 1;
+        }
+
+        .vault-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-tertiary);
+        }
+
+        .vault-empty svg {
+            width: 48px;
+            height: 48px;
+            color: var(--color-border);
+            margin-bottom: 16px;
+        }
+
+        .vault-empty-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .vault-empty-desc {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .vault-lightbox {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.92);
+            z-index: 500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .vault-lightbox.active {
+            display: flex;
+        }
+
+        .vault-lightbox-img {
+            max-width: 90vw;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: var(--radius-md);
+            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5);
+        }
+
+        .vault-lightbox-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color var(--transition-fast);
+        }
+
+        .vault-lightbox-close:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .vault-lightbox-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .vault-lightbox-name {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .vault-confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: var(--color-overlay);
+            z-index: 600;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .vault-confirm-overlay.active {
+            display: flex;
+        }
+
+        .vault-confirm-dialog {
+            width: 100%;
+            max-width: 360px;
+            background-color: var(--color-card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card-hover);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .vault-confirm-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .vault-confirm-message {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .vault-confirm-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .vault-toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background-color: var(--color-text-primary);
+            color: var(--color-bg);
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 700;
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .vault-toast.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .vault-upload-area {
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color var(--transition-fast), background-color var(--transition-fast);
+            margin-bottom: 24px;
+        }
+
+        .vault-upload-area:hover {
+            border-color: var(--color-accent);
+            background-color: rgba(0, 113, 227, 0.04);
+        }
+
+        .vault-upload-area svg {
+            width: 36px;
+            height: 36px;
+            color: var(--color-text-tertiary);
+            margin-bottom: 12px;
+        }
+
+        .vault-upload-area-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 4px;
+        }
+
+        .vault-upload-area-desc {
+            font-size: 13px;
+            color: var(--color-text-tertiary);
+        }
+
+        .vault-section-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            color: var(--color-text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vault-section-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-accent);
+        }
+
+        .vault-divider {
+            height: 0.5px;
+            background-color: var(--color-border);
+            margin: 24px 0;
+        }
+
+        .vault-upload-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="navigation-container">
+            <div class="navigation-wrapper">
+                <div class="nav-header">
+                    <a href="index.html" class="nav-logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        我的博客
+                    </a>
+                    <div class="nav-actions">
+                        <button class="nav-search-btn" aria-label="Search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </button>
+                        <button class="nav-theme-btn" aria-label="Toggle theme">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        </button>
+                        <button class="nav-menu-btn" aria-label="Menu">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" class="search-input" placeholder="搜索文章..." aria-label="搜索文章">
+                    </div>
+                </div>
+
+                <nav class="nav-links" aria-label="Main navigation">
+                    <div class="nav-section-title">发现</div>
+                    <a href="index.html" class="nav-link" data-nav="home">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        首页
+                    </a>
+                    <a href="index.html?featured=true" class="nav-link" data-nav="featured">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        精选
+                    </a>
+                    <a href="about.html" class="nav-link" data-nav="about">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        关于
+                    </a>
+
+                    <div class="nav-section-title">分类</div>
+                    <a href="index.html?tag=开发" class="nav-link" data-nav="cat-开发">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        开发
+                    </a>
+                    <a href="index.html?tag=设计" class="nav-link" data-nav="cat-设计">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                        设计
+                    </a>
+                    <a href="index.html?tag=创意" class="nav-link" data-nav="cat-创意">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                        创意
+                    </a>
+                    <a href="index.html?tag=生活" class="nav-link" data-nav="cat-生活">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                        生活
+                    </a>
+
+                    <div class="nav-section-title">管理</div>
+                    <a href="admin.html" class="nav-link" data-nav="admin">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        后台管理
+                    </a>
+                    <a href="vault.html" class="nav-link" data-nav="vault">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        私密相册
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="page-container" data-page="vault">
+            <div class="vault-page">
+                <h1 class="vault-title">StaticVault</h1>
+                <p class="vault-subtitle">你的私密加密相册。</p>
+
+                <div id="vault-lock-screen" class="vault-lock-screen">
+                    <div class="vault-lock-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <div class="vault-lock-title" id="vault-lock-title">设置密码</div>
+                    <div class="vault-lock-desc" id="vault-lock-desc">创建密码以保护你的相册。此密码无法恢复。</div>
+                    <div class="vault-password-form">
+                        <input type="password" id="vault-password-input" class="vault-password-input" placeholder="输入密码" autocomplete="off">
+                        <input type="password" id="vault-password-confirm" class="vault-password-input" placeholder="确认密码" autocomplete="off" style="display:none;">
+                        <div class="vault-error-msg" id="vault-error-msg"></div>
+                        <button class="vault-btn vault-btn-primary" id="vault-submit-btn" style="width:100%;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                            <span id="vault-submit-text">创建相册</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="vault-gallery" class="vault-gallery">
+                    <div class="vault-toolbar">
+                        <div class="vault-toolbar-left">
+                            <span class="vault-photo-count" id="vault-photo-count">0 张照片</span>
+                        </div>
+                        <div class="vault-toolbar-right">
+                            <button class="vault-btn vault-btn-secondary vault-btn-sm" id="btn-upload-photos">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                上传照片
+                            </button>
+                            <button class="vault-btn vault-btn-secondary vault-btn-sm" id="btn-import-package">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                导入加密包
+                            </button>
+                            <button class="vault-btn vault-btn-secondary vault-btn-sm" id="btn-export">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                导出
+                            </button>
+                            <button class="vault-btn vault-btn-danger vault-btn-sm" id="btn-delete-all">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                全部删除
+                            </button>
+                            <button class="vault-btn vault-btn-secondary vault-btn-sm" id="btn-lock">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                锁定
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="vault-photo-grid" class="vault-grid"></div>
+
+                    <div id="vault-empty-state" class="vault-empty" style="display:none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        <div class="vault-empty-title">暂无照片</div>
+                        <div class="vault-empty-desc">上传你的第一张照片</div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer-container">
+                <div class="footer-inner">
+                    <div class="footer-links">
+                        <a href="index.html">首页</a>
+                        <a href="about.html">关于</a>
+                        <a href="admin.html">后台管理</a>
+                        <a href="vault.html">私密相册</a>
+                    </div>
+                    <span>&copy; 2026 我的博客. 保留所有权利.</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div class="search-overlay">
+        <div class="search-modal">
+            <div class="search-modal-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="search-modal-input" placeholder="搜索文章..." aria-label="搜索">
+                <button class="search-modal-close" aria-label="关闭搜索">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="search-results"></div>
+        </div>
+    </div>
+
+    <div class="vault-lightbox" id="vault-lightbox">
+        <button class="vault-lightbox-close" id="lightbox-close" aria-label="关闭">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <img class="vault-lightbox-img" id="lightbox-img" src="" alt="">
+        <div class="vault-lightbox-name" id="lightbox-name"></div>
+    </div>
+
+    <div class="vault-confirm-overlay" id="vault-confirm-overlay">
+        <div class="vault-confirm-dialog">
+            <div class="vault-confirm-title" id="vault-confirm-title">删除所有照片？</div>
+            <div class="vault-confirm-message" id="vault-confirm-message">此操作无法撤销。</div>
+            <div class="vault-confirm-actions">
+                <button class="vault-btn vault-btn-secondary vault-btn-sm" id="vault-confirm-cancel">取消</button>
+                <button class="vault-btn vault-btn-danger vault-btn-sm" id="vault-confirm-ok">全部删除</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="vault-toast" id="vault-toast"></div>
+
+    <input type="file" id="photo-file-input" accept="image/*" multiple style="display:none;">
+    <input type="file" id="package-file-input" accept=".json" style="display:none;">
+
+    <script src="assets/data.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+    (function() {
+        var STORAGE_PASSWORD = 'vault-password-hash';
+        var STORAGE_PHOTOS = 'vault-photos';
+        var currentPassword = null;
+        var confirmCallback = null;
+
+        function $(sel) { return document.querySelector(sel); }
+        function $$(sel) { return document.querySelectorAll(sel); }
+
+        function simpleHash(str) {
+            var hash = 5381;
+            for (var i = 0; i < str.length; i++) {
+                hash = ((hash << 5) + hash) + str.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return hash.toString(16);
+        }
+
+        function encrypt(data, key) {
+            var result = '';
+            for (var i = 0; i < data.length; i++) {
+                var charCode = data.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                result += String.fromCharCode(charCode);
+            }
+            return btoa(result);
+        }
+
+        function decrypt(data, key) {
+            var decoded = atob(data);
+            var result = '';
+            for (var i = 0; i < decoded.length; i++) {
+                var charCode = decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                result += String.fromCharCode(charCode);
+            }
+            return result;
+        }
+
+        function hasPassword() {
+            return !!localStorage.getItem(STORAGE_PASSWORD);
+        }
+
+        function showToast(message) {
+            var toast = $('#vault-toast');
+            toast.textContent = message;
+            toast.classList.add('visible');
+            setTimeout(function() {
+                toast.classList.remove('visible');
+            }, 2500);
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            $('#vault-confirm-title').textContent = title;
+            $('#vault-confirm-message').textContent = message;
+            confirmCallback = onConfirm;
+            $('#vault-confirm-overlay').classList.add('active');
+        }
+
+        function hideConfirm() {
+            $('#vault-confirm-overlay').classList.remove('active');
+            confirmCallback = null;
+        }
+
+        function showLockScreen() {
+            var isSetup = !hasPassword();
+            $('#vault-lock-screen').style.display = 'flex';
+            $('#vault-gallery').classList.remove('active');
+
+            if (isSetup) {
+                $('#vault-lock-title').textContent = '设置密码';
+                $('#vault-lock-desc').textContent = '创建密码以保护你的相册。此密码无法恢复。';
+                $('#vault-password-confirm').style.display = 'block';
+                $('#vault-submit-text').textContent = '创建相册';
+                $('#vault-password-input').placeholder = '输入密码';
+            } else {
+                $('#vault-lock-title').textContent = '相册已锁定';
+                $('#vault-lock-desc').textContent = '输入密码解锁相册。';
+                $('#vault-password-confirm').style.display = 'none';
+                $('#vault-submit-text').textContent = '解锁';
+                $('#vault-password-input').placeholder = '输入密码解锁';
+            }
+
+            $('#vault-password-input').value = '';
+            $('#vault-password-confirm').value = '';
+            $('#vault-error-msg').textContent = '';
+            $('#vault-password-input').classList.remove('error');
+            $('#vault-password-confirm').classList.remove('error');
+        }
+
+        function showGallery() {
+            $('#vault-lock-screen').style.display = 'none';
+            $('#vault-gallery').classList.add('active');
+            renderGallery();
+        }
+
+        function handleSubmit() {
+            var password = $('#vault-password-input').value;
+            var isSetup = !hasPassword();
+
+            if (isSetup) {
+                var confirm = $('#vault-password-confirm').value;
+                if (!password) {
+                    $('#vault-error-msg').textContent = '密码不能为空。';
+                    $('#vault-password-input').classList.add('error');
+                    return;
+                }
+                if (password.length < 4) {
+                    $('#vault-error-msg').textContent = '密码至少需要4个字符。';
+                    $('#vault-password-input').classList.add('error');
+                    return;
+                }
+                if (password !== confirm) {
+                    $('#vault-error-msg').textContent = '密码不一致。';
+                    $('#vault-password-confirm').classList.add('error');
+                    return;
+                }
+                localStorage.setItem(STORAGE_PASSWORD, simpleHash(password));
+                currentPassword = password;
+                showToast('相册创建成功');
+                showGallery();
+            } else {
+                if (!password) {
+                    $('#vault-error-msg').textContent = '请输入密码。';
+                    $('#vault-password-input').classList.add('error');
+                    return;
+                }
+                if (simpleHash(password) !== localStorage.getItem(STORAGE_PASSWORD)) {
+                    $('#vault-error-msg').textContent = '密码错误。';
+                    $('#vault-password-input').classList.add('error');
+                    $('#vault-password-input').value = '';
+                    return;
+                }
+                currentPassword = password;
+                showToast('相册已解锁');
+                showGallery();
+            }
+        }
+
+        function getPhotos() {
+            try {
+                var raw = localStorage.getItem(STORAGE_PHOTOS);
+                if (!raw) return [];
+                var encrypted = JSON.parse(raw);
+                var decrypted = decrypt(encrypted, currentPassword);
+                return JSON.parse(decrypted);
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function savePhotos(photos) {
+            var json = JSON.stringify(photos);
+            var encrypted = encrypt(json, currentPassword);
+            localStorage.setItem(STORAGE_PHOTOS, JSON.stringify(encrypted));
+        }
+
+        function renderGallery() {
+            var photos = getPhotos();
+            var grid = $('#vault-photo-grid');
+            var emptyState = $('#vault-empty-state');
+            var countEl = $('#vault-photo-count');
+
+            countEl.textContent = photos.length + ' 张照片';
+
+            if (photos.length === 0) {
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            grid.innerHTML = photos.map(function(photo, index) {
+                return '<div class="vault-photo-card" data-index="' + index + '">' +
+                    '<img src="' + photo.data + '" alt="' + (photo.name || '照片') + '" loading="lazy">' +
+                    '<button class="vault-photo-delete" data-index="' + index + '" aria-label="删除照片">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+                    '</button>' +
+                    '<div class="vault-photo-name">' + (photo.name || '照片') + '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function uploadPhotos(files) {
+            if (!currentPassword) return;
+            var photos = getPhotos();
+            var processed = 0;
+            var total = files.length;
+
+            Array.from(files).forEach(function(file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var base64 = e.target.result;
+                    photos.push({
+                        data: base64,
+                        name: file.name,
+                        date: new Date().toISOString()
+                    });
+                    processed++;
+                    if (processed === total) {
+                        savePhotos(photos);
+                        renderGallery();
+                        showToast('照片已上传');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function importPackage(file) {
+            if (!currentPassword) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var pkg = JSON.parse(e.target.result);
+                    if (!pkg.photos || !Array.isArray(pkg.photos)) {
+                        showToast('无效的加密包格式');
+                        return;
+                    }
+                    var photos = getPhotos();
+                    var imported = 0;
+                    pkg.photos.forEach(function(item) {
+                        if (item.data && item.name) {
+                            photos.push({
+                                data: item.data,
+                                name: item.name,
+                                date: item.date || new Date().toISOString()
+                            });
+                            imported++;
+                        }
+                    });
+                    savePhotos(photos);
+                    renderGallery();
+                    showToast('加密包已导入');
+                } catch (err) {
+                    showToast('导入加密包失败');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function deletePhoto(index) {
+            var photos = getPhotos();
+            if (index >= 0 && index < photos.length) {
+                photos.splice(index, 1);
+                savePhotos(photos);
+                renderGallery();
+                showToast('照片已删除');
+            }
+        }
+
+        function deleteAllPhotos() {
+            showConfirm(
+                '删除所有照片？',
+                '此操作无法撤销。',
+                function() {
+                    savePhotos([]);
+                    renderGallery();
+                    showToast('所有照片已删除');
+                }
+            );
+        }
+
+        function exportPackage() {
+            if (!currentPassword) return;
+            var photos = getPhotos();
+            if (photos.length === 0) {
+                showToast('没有照片可导出');
+                return;
+            }
+            var pkg = {
+                photos: photos.map(function(p) {
+                    return {
+                        data: p.data,
+                        name: p.name,
+                        date: p.date
+                    };
+                })
+            };
+            var json = JSON.stringify(pkg, null, 2);
+            var blob = new Blob([json], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'vault-export-' + new Date().toISOString().slice(0, 10) + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('加密包已导出');
+        }
+
+        function lockVault() {
+            currentPassword = null;
+            showLockScreen();
+            showToast('相册已锁定');
+        }
+
+        function openLightbox(index) {
+            var photos = getPhotos();
+            if (index < 0 || index >= photos.length) return;
+            var photo = photos[index];
+            $('#lightbox-img').src = photo.data;
+            $('#lightbox-img').alt = photo.name || '照片';
+            $('#lightbox-name').textContent = photo.name || '';
+            $('#vault-lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            $('#vault-lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+            $('#lightbox-img').src = '';
+        }
+
+        function init() {
+            showLockScreen();
+
+            $('#vault-submit-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                handleSubmit();
+            });
+
+            $('#vault-password-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!hasPassword() && $('#vault-password-confirm').style.display !== 'none') {
+                        $('#vault-password-confirm').focus();
+                    } else {
+                        handleSubmit();
+                    }
+                }
+            });
+
+            $('#vault-password-input').addEventListener('input', function() {
+                this.classList.remove('error');
+                $('#vault-error-msg').textContent = '';
+            });
+
+            $('#vault-password-confirm').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSubmit();
+                }
+            });
+
+            $('#vault-password-confirm').addEventListener('input', function() {
+                this.classList.remove('error');
+                $('#vault-error-msg').textContent = '';
+            });
+
+            $('#btn-upload-photos').addEventListener('click', function() {
+                $('#photo-file-input').click();
+            });
+
+            $('#photo-file-input').addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    uploadPhotos(e.target.files);
+                    e.target.value = '';
+                }
+            });
+
+            $('#btn-import-package').addEventListener('click', function() {
+                $('#package-file-input').click();
+            });
+
+            $('#package-file-input').addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    importPackage(e.target.files[0]);
+                    e.target.value = '';
+                }
+            });
+
+            $('#btn-export').addEventListener('click', exportPackage);
+            $('#btn-delete-all').addEventListener('click', deleteAllPhotos);
+            $('#btn-lock').addEventListener('click', lockVault);
+
+            $('#vault-photo-grid').addEventListener('click', function(e) {
+                var deleteBtn = e.target.closest('.vault-photo-delete');
+                if (deleteBtn) {
+                    e.stopPropagation();
+                    deletePhoto(parseInt(deleteBtn.dataset.index, 10));
+                    return;
+                }
+                var card = e.target.closest('.vault-photo-card');
+                if (card) {
+                    openLightbox(parseInt(card.dataset.index, 10));
+                }
+            });
+
+            $('#lightbox-close').addEventListener('click', closeLightbox);
+
+            $('#vault-lightbox').addEventListener('click', function(e) {
+                if (e.target === this) closeLightbox();
+            });
+
+            $('#vault-confirm-cancel').addEventListener('click', hideConfirm);
+            $('#vault-confirm-ok').addEventListener('click', function() {
+                if (confirmCallback) confirmCallback();
+                hideConfirm();
+            });
+
+            $('#vault-confirm-overlay').addEventListener('click', function(e) {
+                if (e.target === this) hideConfirm();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if ($('#vault-confirm-overlay').classList.contains('active')) {
+                        hideConfirm();
+                    } else if ($('#vault-lightbox').classList.contains('active')) {
+                        closeLightbox();
+                    }
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+</body>
+</html>
