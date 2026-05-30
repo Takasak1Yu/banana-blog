@@ -13,7 +13,7 @@
 
     <title>私密相册 — 我的博客</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+    <link rel="icon" type="image/svg+xml" sizes="any" href="assets/icons/favicon.svg">
     <link rel="stylesheet" href="assets/style.css">
     <style>
         .vault-page {
@@ -631,21 +631,20 @@
         <div class="page-container" data-page="vault">
             <div class="vault-page">
                 <h1 class="vault-title">StaticVault</h1>
-                <p class="vault-subtitle">你的私密加密相册。</p>
+                <p class="vault-subtitle">安全加密存储。</p>
 
                 <div id="vault-lock-screen" class="vault-lock-screen">
                     <div class="vault-lock-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </div>
-                    <div class="vault-lock-title" id="vault-lock-title">设置密码</div>
-                    <div class="vault-lock-desc" id="vault-lock-desc">创建密码以保护你的相册。此密码无法恢复。</div>
+                    <div class="vault-lock-title" id="vault-lock-title">锁定内容</div>
+                    <div class="vault-lock-desc" id="vault-lock-desc">输入密码以解锁访问。</div>
                     <div class="vault-password-form">
                         <input type="password" id="vault-password-input" class="vault-password-input" placeholder="输入密码" autocomplete="off">
-                        <input type="password" id="vault-password-confirm" class="vault-password-input" placeholder="确认密码" autocomplete="off" style="display:none;">
                         <div class="vault-error-msg" id="vault-error-msg"></div>
                         <button class="vault-btn vault-btn-primary" id="vault-submit-btn" style="width:100%;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                            <span id="vault-submit-text">创建相册</span>
+                            <span id="vault-submit-text">解锁</span>
                         </button>
                     </div>
                 </div>
@@ -667,6 +666,10 @@
                             <button class="vault-btn vault-btn-secondary vault-btn-sm" id="btn-export">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 导出
+                            </button>
+                            <button class="vault-btn vault-btn-primary vault-btn-sm" id="btn-sync-github">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.08 6.44-5.65 0-1.05-.38-2.02-1-2.79.14-.34.22-.71.22-1.11 0-1.39-.75-2.6-1.87-3.24 0 0-.47.15-.94.42-.47-.27-.94-.42-.94-.42C13.75 4.4 13 5.61 13 7c0 .4.08.77.22 1.11-.62.77-1 1.74-1 2.79 0 4.57 3.3 5.3 6.44 5.65a3.37 3.37 0 0 0-.94 2.61V19"/></svg>
+                                同步到 GitHub
                             </button>
                             <button class="vault-btn vault-btn-danger vault-btn-sm" id="btn-delete-all">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -742,15 +745,21 @@
 
     <script src="assets/data.js"></script>
     <script src="assets/app.js"></script>
+    <script src="assets/github-api.js"></script>
     <script>
     (function() {
-        var STORAGE_PASSWORD = 'vault-password-hash';
         var STORAGE_PHOTOS = 'vault-photos';
+        var VAULT_SESSION_KEY = 'vault-session';
+        var SECRET_PASSWORD = 'MjAwMjEyMjA=';
         var currentPassword = null;
         var confirmCallback = null;
 
         function $(sel) { return document.querySelector(sel); }
         function $$(sel) { return document.querySelectorAll(sel); }
+
+        function getSecretPassword() {
+            return atob(SECRET_PASSWORD);
+        }
 
         function simpleHash(str) {
             var hash = 5381;
@@ -759,6 +768,14 @@
                 hash = hash & hash;
             }
             return hash.toString(16);
+        }
+
+        function isVaultUnlocked() {
+            return sessionStorage.getItem(VAULT_SESSION_KEY) === 'unlocked';
+        }
+
+        function unlockVaultSession() {
+            sessionStorage.setItem(VAULT_SESSION_KEY, 'unlocked');
         }
 
         function encrypt(data, key) {
@@ -778,10 +795,6 @@
                 result += String.fromCharCode(charCode);
             }
             return result;
-        }
-
-        function hasPassword() {
-            return !!localStorage.getItem(STORAGE_PASSWORD);
         }
 
         function showToast(message) {
@@ -806,29 +819,11 @@
         }
 
         function showLockScreen() {
-            var isSetup = !hasPassword();
             $('#vault-lock-screen').style.display = 'flex';
             $('#vault-gallery').classList.remove('active');
-
-            if (isSetup) {
-                $('#vault-lock-title').textContent = '设置密码';
-                $('#vault-lock-desc').textContent = '创建密码以保护你的相册。此密码无法恢复。';
-                $('#vault-password-confirm').style.display = 'block';
-                $('#vault-submit-text').textContent = '创建相册';
-                $('#vault-password-input').placeholder = '输入密码';
-            } else {
-                $('#vault-lock-title').textContent = '相册已锁定';
-                $('#vault-lock-desc').textContent = '输入密码解锁相册。';
-                $('#vault-password-confirm').style.display = 'none';
-                $('#vault-submit-text').textContent = '解锁';
-                $('#vault-password-input').placeholder = '输入密码解锁';
-            }
-
             $('#vault-password-input').value = '';
-            $('#vault-password-confirm').value = '';
             $('#vault-error-msg').textContent = '';
             $('#vault-password-input').classList.remove('error');
-            $('#vault-password-confirm').classList.remove('error');
         }
 
         function showGallery() {
@@ -839,44 +834,23 @@
 
         function handleSubmit() {
             var password = $('#vault-password-input').value;
-            var isSetup = !hasPassword();
-
-            if (isSetup) {
-                var confirm = $('#vault-password-confirm').value;
-                if (!password) {
-                    $('#vault-error-msg').textContent = '密码不能为空。';
-                    $('#vault-password-input').classList.add('error');
-                    return;
-                }
-                if (password.length < 4) {
-                    $('#vault-error-msg').textContent = '密码至少需要4个字符。';
-                    $('#vault-password-input').classList.add('error');
-                    return;
-                }
-                if (password !== confirm) {
-                    $('#vault-error-msg').textContent = '密码不一致。';
-                    $('#vault-password-confirm').classList.add('error');
-                    return;
-                }
-                localStorage.setItem(STORAGE_PASSWORD, simpleHash(password));
+            
+            if (!password) {
+                $('#vault-error-msg').textContent = '请输入密码';
+                $('#vault-password-input').classList.add('error');
+                return;
+            }
+            
+            var secret = getSecretPassword();
+            if (password === secret) {
                 currentPassword = password;
-                showToast('相册创建成功');
+                unlockVaultSession();
+                showToast('已解锁');
                 showGallery();
             } else {
-                if (!password) {
-                    $('#vault-error-msg').textContent = '请输入密码。';
-                    $('#vault-password-input').classList.add('error');
-                    return;
-                }
-                if (simpleHash(password) !== localStorage.getItem(STORAGE_PASSWORD)) {
-                    $('#vault-error-msg').textContent = '密码错误。';
-                    $('#vault-password-input').classList.add('error');
-                    $('#vault-password-input').value = '';
-                    return;
-                }
-                currentPassword = password;
-                showToast('相册已解锁');
-                showGallery();
+                $('#vault-error-msg').textContent = '密码错误';
+                $('#vault-password-input').classList.add('error');
+                $('#vault-password-input').value = '';
             }
         }
 
@@ -1035,8 +1009,9 @@
 
         function lockVault() {
             currentPassword = null;
+            sessionStorage.removeItem(VAULT_SESSION_KEY);
             showLockScreen();
-            showToast('相册已锁定');
+            showToast('已锁定');
         }
 
         function openLightbox(index) {
@@ -1056,8 +1031,59 @@
             $('#lightbox-img').src = '';
         }
 
+        function syncVaultToGitHub() {
+            if (!GitHubAPI.loadConfig() || !GitHubAPI.isConfigured()) {
+                showToast('请先在后台管理中配置 GitHub');
+                return;
+            }
+            
+            var photos = getPhotos();
+            if (photos.length === 0) {
+                showToast('没有照片可同步');
+                return;
+            }
+            
+            var btn = $('#btn-sync-github');
+            btn.disabled = true;
+            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 同步中...';
+            
+            var pkg = {
+                photos: photos.map(function(p) {
+                    return {
+                        data: p.data,
+                        name: p.name,
+                        date: p.date
+                    };
+                }),
+                exportedAt: new Date().toISOString()
+            };
+            var content = '// StaticVault 加密相册数据\n' +
+                          '// 此文件由私密相册同步功能生成\n\n' +
+                          'var VAULT_DATA = ' + JSON.stringify(pkg, null, 2) + ';\n';
+            
+            GitHubAPI.getFile('assets/vault-data.js')
+                .then(function(file) {
+                    return GitHubAPI.createOrUpdateFile('assets/vault-data.js', content, '更新私密相册', file.sha);
+                })
+                .then(function() {
+                    showToast('同步成功！相册已上传到 GitHub');
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.08 6.44-5.65 0-1.05-.38-2.02-1-2.79.14-.34.22-.71.22-1.11 0-1.39-.75-2.6-1.87-3.24 0 0-.47.15-.94.42-.47-.27-.94-.42-.94-.42C13.75 4.4 13 5.61 13 7c0 .4.08.77.22 1.11-.62.77-1 1.74-1 2.79 0 4.57 3.3 5.3 6.44 5.65a3.37 3.37 0 0 0-.94 2.61V19"/></svg> 同步到 GitHub';
+                })
+                .catch(function(err) {
+                    showToast('同步失败: ' + err.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.08 6.44-5.65 0-1.05-.38-2.02-1-2.79.14-.34.22-.71.22-1.11 0-1.39-.75-2.6-1.87-3.24 0 0-.47.15-.94.42-.47-.27-.94-.42-.94-.42C13.75 4.4 13 5.61 13 7c0 .4.08.77.22 1.11-.62.77-1 1.74-1 2.79 0 4.57 3.3 5.3 6.44 5.65a3.37 3.37 0 0 0-.94 2.61V19"/></svg> 同步到 GitHub';
+                });
+        }
+
         function init() {
-            showLockScreen();
+            if (isVaultUnlocked()) {
+                currentPassword = getSecretPassword();
+                showGallery();
+            } else {
+                showLockScreen();
+            }
 
             $('#vault-submit-btn').addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1067,27 +1093,11 @@
             $('#vault-password-input').addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    if (!hasPassword() && $('#vault-password-confirm').style.display !== 'none') {
-                        $('#vault-password-confirm').focus();
-                    } else {
-                        handleSubmit();
-                    }
-                }
-            });
-
-            $('#vault-password-input').addEventListener('input', function() {
-                this.classList.remove('error');
-                $('#vault-error-msg').textContent = '';
-            });
-
-            $('#vault-password-confirm').addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
                     handleSubmit();
                 }
             });
 
-            $('#vault-password-confirm').addEventListener('input', function() {
+            $('#vault-password-input').addEventListener('input', function() {
                 this.classList.remove('error');
                 $('#vault-error-msg').textContent = '';
             });
@@ -1117,6 +1127,7 @@
             $('#btn-export').addEventListener('click', exportPackage);
             $('#btn-delete-all').addEventListener('click', deleteAllPhotos);
             $('#btn-lock').addEventListener('click', lockVault);
+            $('#btn-sync-github').addEventListener('click', syncVaultToGitHub);
 
             $('#vault-photo-grid').addEventListener('click', function(e) {
                 var deleteBtn = e.target.closest('.vault-photo-delete');
